@@ -6,21 +6,21 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = ref(false)
   const assessmentRecords = ref([])
 
-  const login = async (email, password) => {
+  const handleGitHubCallback = async (code) => {
     try {
-      // 这里将来需要连接后端API进行实际的用户验证
+      // 这里需要调用后端API来交换访问令牌并获取用户信息
       // 目前使用模拟数据
-      if (email && password) {
-        user.value = {
-          email,
-          id: Math.random().toString(36).substr(2, 9)
-        }
-        isAuthenticated.value = true
-        return true
+      const mockGitHubUser = {
+        id: Math.random().toString(36).substr(2, 9),
+        email: 'github_user@example.com',
+        username: 'GitHub User'
       }
-      return false
+
+      user.value = mockGitHubUser
+      isAuthenticated.value = true
+      return true
     } catch (error) {
-      console.error('Login failed:', error)
+      console.error('GitHub authentication failed:', error)
       return false
     }
   }
@@ -50,7 +50,7 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     isAuthenticated,
     assessmentRecords,
-    login,
+    handleGitHubCallback,
     logout,
     saveAssessment,
     getAssessments
