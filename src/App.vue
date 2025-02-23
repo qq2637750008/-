@@ -57,6 +57,9 @@
           <el-button type="primary" size="large" @click="calculateScore" :disabled="!isAllQuestionsAnswered">
             生成评估报告
           </el-button>
+          <el-button v-if="showResult" type="success" size="large" @click="exportAsImage">
+            导出评估结果
+          </el-button>
           
           <div v-if="showResult" class="assessment-result">
             <div class="result-header">
@@ -90,6 +93,7 @@
 import { ref, computed } from 'vue'
 import { useAuthStore } from './store/auth'
 import LoginForm from './components/LoginForm.vue'
+import html2canvas from 'html2canvas'
 
 const authStore = useAuthStore()
 const loginFormRef = ref(null)
@@ -243,6 +247,25 @@ const calculateScore = () => {
     })
   }
 }
+
+const exportAsImage = async () => {
+  const element = document.querySelector('.assessment-card')
+  if (element) {
+    try {
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      })
+      const link = document.createElement('a')
+      link.download = '认知偏差评估结果.png'
+      link.href = canvas.toDataURL('image/png')
+      link.click()
+    } catch (error) {
+      console.error('导出图片失败:', error)
+    }
+  }
+}
 </script>
 
 <LoginForm ref="loginFormRef" />
@@ -326,10 +349,22 @@ const calculateScore = () => {
   padding: 8px 16px;
   border-radius: 4px;
   transition: background-color 0.3s;
+  display: inline-block;
+  border: 1px solid #dcdfe6;
+  margin-bottom: 10px;
+  min-width: 100px;
+  text-align: center;
 }
 
 .custom-radio:hover {
   background-color: #f5f7fa;
+  border-color: #409EFF;
+}
+
+.el-radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .result-section {
