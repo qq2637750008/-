@@ -6,15 +6,6 @@
           <h1>查理芒格25人类误判倾向评估</h1>
           <p class="author">b站 teihaku</p>
           <p class="subtitle">专业的认知偏差测评工具</p>
-          <div class="user-actions">
-            <template v-if="!authStore.isAuthenticated">
-              <el-button type="primary" @click="loginFormRef?.show()">登录</el-button>
-            </template>
-            <template v-else>
-              <span class="welcome-text">欢迎，{{ authStore.user?.email }}</span>
-              <el-button type="info" @click="authStore.logout">退出</el-button>
-            </template>
-          </div>
         </div>
       </template>
 
@@ -91,12 +82,8 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useAuthStore } from './store/auth'
-import LoginForm from './components/LoginForm.vue'
 import html2canvas from 'html2canvas'
 
-const authStore = useAuthStore()
-const loginFormRef = ref(null)
 const situation = ref('')
 
 const biases = [
@@ -121,7 +108,7 @@ const biases = [
     description: '倾向于保持行为的一致性'
   },
   {
-    name: '好奇心倾向',
+    name: '好奇 dunno 倾向',
     description: '倾向于对新事物产生兴趣和探索欲望'
   },
   {
@@ -236,16 +223,6 @@ const resultLevel = computed(() => {
 const calculateScore = () => {
   totalScore.value = form.value.reduce((sum, score) => sum + score, 0)
   showResult.value = true
-
-  if (authStore.isAuthenticated) {
-    // 保存评估记录
-    authStore.saveAssessment({
-      situation: situation.value,
-      scores: form.value,
-      totalScore: totalScore.value,
-      resultLevel: resultLevel.value
-    })
-  }
 }
 
 const exportAsImage = async () => {
@@ -267,8 +244,6 @@ const exportAsImage = async () => {
   }
 }
 </script>
-
-<LoginForm ref="loginFormRef" />
 
 <style scoped>
 .container {
